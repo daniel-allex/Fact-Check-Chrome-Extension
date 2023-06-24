@@ -13,3 +13,4 @@ class sentenceEmbeddingTransformer:
     
     def compareSentences(self, embedding_1, embedding_2):
         return util.pytorch_cos_sim(embedding_1, embedding_2)
+    

@@ -19,3 +19,6 @@ class database:
 
     def find_row(self, column_name, target):
         return self.collection.find_one({column_name : target})
+    
+    def get_all(self):
+        return self.collection.find()
