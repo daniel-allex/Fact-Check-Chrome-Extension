@@ -1,12 +1,9 @@
 from flask import Flask, render_template, url_for, request, redirect, json
 from flask_cors import CORS
-<<<<<<< HEAD
-=======
 from server.sentence_tokenizer import SentenceTokenizer
 from server.database import Database
 from server.sentence_embeddings import sentenceEmbeddingTransformer
 from server.vector_search import VectorSearcher
->>>>>>> c2a6fd9 (updated connections)
 
 app = Flask(__name__)
 CORS(app)
@@ -28,17 +25,6 @@ def index():
 def handleRequest():
     print("requested")
     text = request.get_json()["contents"]
-<<<<<<< HEAD
-    print(text)
-    example = [{
-       "sentence": "maker of launch vehicles",
-        "results": [{
-            "error": "He did not make an AI",
-            "source": "https://www.politifact.com/factchecks/2020/jul/28/stella-immanuel/dont-fall-video-hydroxychloroquine-not-covid-19-cu/",
-           "correct": "PolitiFact | Hydroxychloroquine is not a COVID-19 cure"
-        }]
-        }]
-=======
     
     sentences = tk.tokenize_raw(text)
     embeddings = embedding_transformer.transformSentences(sentences)
@@ -52,7 +38,6 @@ def handleRequest():
         for i in range(len(ids)):
             if similarities[i] != -1:
                 row = db.find_row('Index', ids[i])
->>>>>>> c2a6fd9 (updated connections)
 
                 misinfo_dict.append({"sentence" : sentence,
                                      "results" : [{
