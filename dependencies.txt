@@ -3,3 +3,5 @@
 3. pip install flask
 4. pip instlal flask_cors
 5. flask run -- to run server
+6. pip install annoy
+7. pip install numpy
