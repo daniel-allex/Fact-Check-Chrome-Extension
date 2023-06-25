@@ -1,4 +1,4 @@
-import sentence_embeddings
+from ..server import sentenceEmbeddingTransformer
 import json
 
 with open('server/data.json') as f:
@@ -6,7 +6,7 @@ with open('server/data.json') as f:
     data = json.load(f)
 
 sentences = [data_block['Fakenews'] for data_block in data]
-embeddingTransformer = sentence_embeddings.sentenceEmbeddingTransformer()
+embeddingTransformer = sentenceEmbeddingTransformer()
 vectors = embeddingTransformer.transformSentences(sentences).tolist()
 
 for i in range(len(vectors)):
