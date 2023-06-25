@@ -1,5 +1,5 @@
 import pymongo
-class database:
+class Database:
     def __init__(self, host, database_name, collection_name):
         self.host = host
         self.database_name = database_name

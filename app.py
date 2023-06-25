@@ -11,11 +11,6 @@ tk = SentenceTokenizer()
 embedding_transformer = sentenceEmbeddingTransformer()
 db = Database("mongodb://localhost:27017/", "FakeNewsDB", "PoliticalData")
 vs = VectorSearcher(384, 100, "ANNTree.ann", db)
-"""
-a = embedding_transformer.transformSentence("We have plans to build a railroad from the Pacific all the way across the Indian Ocean.")
-b = embedding_transformer.transformSentence("Work is ongoing constructing Joe Biden's 8,000 mile long 'ocean train'")
-print(embedding_transformer.compareSentences(a, b))
-"""
 
 @app.route("/")
 def index():
@@ -25,26 +20,28 @@ def index():
 def handleRequest():
     print("requested")
     text = request.get_json()["contents"]
-    
     sentences = tk.tokenize_raw(text)
+
     embeddings = embedding_transformer.transformSentences(sentences)
     misinfo_dict = []
 
     for i in range(len(embeddings)):
         sentence = sentences[i]
         embedding = embeddings[i]
-        ids, similarities = vs.search_vector(embedding, 100)
+        ids, distances = vs.search_vector(embedding, 10)
 
         for i in range(len(ids)):
-            if similarities[i] != -1:
+            if distances[i] < 0.45:
                 row = db.find_row('Index', ids[i])
 
                 misinfo_dict.append({"sentence" : sentence,
                                      "results" : [{
-                                         "error" : row['Truenews'],
+                                         "error" : row['Fakenews'],
                                          "source" : row['source'],
                                          "correct" : "Politifact | " + row['Truenews']
                                      }]})
+            else:
+                break
 
     return json.dumps(misinfo_dict)
 
