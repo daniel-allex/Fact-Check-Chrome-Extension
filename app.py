@@ -20,16 +20,31 @@ def index():
 def handleRequest():
     print("requested")
     text = request.get_json()["contents"]
+    
     sentences = tk.tokenize_raw(text)
 
-    embeddings = embedding_transformer.transformSentences(sentences)
+    dereferenced_sentences = []
+
+    used_context = []
+    for i in range(len(sentences)):
+        if len(used_context) > 6:
+            used_context.pop(0)
+        
+        context = " ".join(used_context)
+        dereferenced = tk.replace_references(context, sentences[i])
+        dereferenced_sentences.append(dereferenced)
+
+        used_context.append(sentences[i])
+
+
+    embeddings = embedding_transformer.transformSentences(dereferenced_sentences)
     misinfo_dict = []
 
     for i in range(len(embeddings)):
         sentence = sentences[i]
         embedding = embeddings[i]
         ids, distances = vs.search_vector(embedding, 10)
-
+        
         for i in range(len(ids)):
             if distances[i] < 0.45:
                 row = db.find_row('Index', ids[i])
